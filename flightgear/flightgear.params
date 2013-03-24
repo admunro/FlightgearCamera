@@ -1,0 +1,1 @@
+--fdm=null --disable-panel --generic=socket,in,60,,8888,udp,f3 --on-ground --airport=ETSI --runway=25R --disable-real-weather-fetch --visibility=800000 --season=summer
