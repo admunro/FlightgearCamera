@@ -90,7 +90,7 @@ int main()
    attitude.heading     = 0.0;
  
    ownship = SOUTH_OF_RWY_25L;
-   target  = RUNWAY_25L_MIDPOINT;
+   target  = RUNWAY_25R_MIDPOINT;
    
    ldpCamera.starePoint = target;
 
