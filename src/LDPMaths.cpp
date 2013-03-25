@@ -137,7 +137,7 @@ namespace LDPMaths
 
 
    NavPosition newNavPosition(NavCosines cosines,
-		                      double     slantRange)
+		                        double     slantRange)
    {
 	   NavPosition newPosition;
 

@@ -97,7 +97,7 @@ int main()
    
    ldpCamera.starePoint = target;
 
-   for (int i = 1; i <= 425; i++)
+   for (int i = 1; i <= 600; i++)
    {
 
 	  AzimuthElevation slew;
@@ -108,19 +108,37 @@ int main()
          //ownship.lon += 0.00001;
 	  }
 
-	  if (i < 35)
+	  if (i < 50)
 	  {
-	     slew = SLEW_RIGHT;
-
+	     slew = NO_SLEW;
 	  }
+     else if (i < 80)
+     {
+        slew = SLEW_RIGHT;
+     }
+     else if (i < 125)
+     {
+        slew = NO_SLEW;
+     }
+     else if (i < 175)
+     {
+        FoV = FOV_W_IR;
+     }
 	  else if (i < 200)
 	  {
         slew = SLEW_LEFT;
-        FoV = FOV_W_IR;
 	  }
-     else 
+     else if (i < 250)
      {
         slew = NO_SLEW;
+     }
+     else if (i < 300)
+     {
+        FoV = FOV_SW_IR;
+     }
+     else if (i < 450)
+     {
+        FoV = FOV_W_IR;
      }
 
       ldpCamera = lookAtLatLongAlt(ldpCamera.starePoint,
