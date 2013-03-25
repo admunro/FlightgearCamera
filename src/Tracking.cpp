@@ -27,8 +27,10 @@
 // ----------------------------------------------------------------------------
 //
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 #include "Tracking.hpp"
+#include "wgs84_utils.h"
 
 const float XYDeadzone       = 0.00;
 
@@ -65,32 +67,6 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
 
    double aircraftSlantRange = getSlantRange(ownshipXYZ, targetXYZ);
 
-   if ((fabs(slewDemand.azimuth) > XYDeadzone) ||
-	   (fabs(slewDemand.elevation) > XYDeadzone))
-   {
-	   // Azimuth is has a range of +/- 180
-	   if (camera.anglesNav.azimuth * RAD_2_DEG < 0)
-	   {
-	      camera.anglesNav.azimuth -= slewDemand.azimuth   * commandedFoV * dt;
-	   }
-	   else
-	   {
-          camera.anglesNav.azimuth += slewDemand.azimuth   * commandedFoV * dt;
-	   }
-
-	   camera.anglesNav.elevation += slewDemand.elevation * commandedFoV * dt;
-
-	   targetNavCosines = navAnglesToCosines(camera.anglesNav);
-
-	   targetNavPosition = newNavPosition(targetNavCosines, aircraftSlantRange);
-
-	   camera.starePoint = newEarthPosition(ownshipPosition, targetNavPosition);
-
-   }
-   else
-   {
-	   camera.starePoint = targetPosition;
-   }
 
    targetNavCosines = navAnglesToCosines(camera.anglesNav);
 
@@ -127,9 +103,94 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
 
    camera.anglesNav = getAngles(camera.eyePoint, targetPosition);
 
+
+   if ((fabs(slewDemand.azimuth) > XYDeadzone) ||
+	   (fabs(slewDemand.elevation) > XYDeadzone))
+   {
+      double LOS_enu_azel[3];
+      double pos_tgt_llh[3];
+      
+      double pos_LOS_xyz[3];
+      pos_LOS_xyz[0] = eyepointXYZ.X;
+      pos_LOS_xyz[1] = eyepointXYZ.Y;
+      pos_LOS_xyz[2] = eyepointXYZ.Z;
+
+
+      double pos_tgt_xyz[3];
+      pos_tgt_xyz[0] = targetXYZ.X;
+      pos_tgt_xyz[1] = targetXYZ.Y;
+      pos_tgt_xyz[2] = targetXYZ.Z;
+
+
+
+      double azimuthangle_eyepoint_geoid   = camera.anglesNav.azimuth + commandedFoV * dt * slewDemand.azimuth;
+      double elevationangle_eyepoint_geoid = camera.anglesNav.elevation + commandedFoV * dt * slewDemand.elevation;
+      
+      // new target position estimation based on constant altitude geoid 
+      LOS_enu_azel[1] = -cos(azimuthangle_eyepoint_geoid) * cos(elevationangle_eyepoint_geoid);
+      LOS_enu_azel[0] = -sin(azimuthangle_eyepoint_geoid) * cos(elevationangle_eyepoint_geoid);
+      LOS_enu_azel[2] = -sin(elevationangle_eyepoint_geoid);
+  
+  
+      pos_tgt_llh[0] = targetPosition.lat;
+      pos_tgt_llh[1] = targetPosition.lon;
+      pos_tgt_llh[2] = targetPosition.alt;
+
+       
+      double h0 = pos_tgt_llh[2];
+      double k = (ownshipPosition.alt - h0) / sin(elevationangle_eyepoint_geoid);
+      double resolution = 1000.0;
+      double sw = 0.66;
+
+      double LOS_enu_azel_tmp[3];
+      double pos_tgt_xyz_tmp[3];
+      double pos_tgt_llh_tmp[3];
+ 
+      printf("LOS_enu_azel[0]%f, LOS_enu_azel[1]%f, LOS_enu_azel[2]%f\n", LOS_enu_azel[0], LOS_enu_azel[1], LOS_enu_azel[2]);
+  
+      while (resolution > 0.001 && sw > 0.00001)  
+      {    
+         LOS_enu_azel_tmp[0] = LOS_enu_azel[0] * k;
+         LOS_enu_azel_tmp[1] = LOS_enu_azel[1] * k;
+         LOS_enu_azel_tmp[2] = LOS_enu_azel[2] * k;  
+    
+         printf("LOS_enu_azel_tmp[0] %f, LOS_enu_azel_tmp[1] %f, LOS_enu_azel_tmp[2]%f\n", LOS_enu_azel_tmp[0],LOS_enu_azel_tmp[1],LOS_enu_azel_tmp[2]);
+    
+         wgs84ENU2XYZ(&LOS_enu_azel_tmp[0], &LOS_enu_azel_tmp[1], &LOS_enu_azel_tmp[2], &pos_LOS_xyz[0], &pos_LOS_xyz[1], &pos_LOS_xyz[2], &pos_tgt_xyz_tmp[0], &pos_tgt_xyz_tmp[1], &pos_tgt_xyz_tmp[2]);
+         wgs84XYZ2LLH(&pos_tgt_xyz_tmp[0], &pos_tgt_xyz_tmp[1], &pos_tgt_xyz_tmp[2], &pos_tgt_llh_tmp[0], &pos_tgt_llh_tmp[1], &pos_tgt_llh_tmp[2]); 
+
+         if (pos_tgt_llh_tmp[2] > h0) 
+         {
+            k = k * (1.0 + sw) ;
+         }
+         if (pos_tgt_llh_tmp[2] < h0) 
+         {
+            k = k * (1.0 - sw) ;
+         }
+         sw = sw * 0.7;
+         resolution = fabs(pos_tgt_llh_tmp[2] - h0);
+      }
+  
+   
+      pos_tgt_xyz[0] = pos_tgt_xyz_tmp[0];
+      pos_tgt_xyz[1] = pos_tgt_xyz_tmp[1];
+      pos_tgt_xyz[2] = pos_tgt_xyz_tmp[2];
+
+
+      wgs84XYZ2LLH(&pos_tgt_xyz[0], &pos_tgt_xyz[1], &pos_tgt_xyz[2], &pos_tgt_llh[0], &pos_tgt_llh[1], &pos_tgt_llh[2]);
+
+      camera.starePoint.lat = pos_tgt_llh[0];
+      camera.starePoint.lon = pos_tgt_llh[1];
+      camera.starePoint.alt = pos_tgt_llh[2];
+
+   }
+   else
+   {
+	   camera.starePoint = targetPosition;
+   }
+
    return camera;
    
 }
-
 
 

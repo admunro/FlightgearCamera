@@ -25,7 +25,8 @@ using namespace std;
     const double SWITCH_RANGE = 50000.0;
 
     const AzimuthElevation NO_SLEW        (0.0, 0.0);
-    const AzimuthElevation AZIMUTH_SLEW   (0.1, 0.0);
+    const AzimuthElevation SLEW_RIGHT     (0.5, 0.0);
+    const AzimuthElevation SLEW_LEFT      (-0.5, 0.0);
     const AzimuthElevation ELEVATION_SLEW (0.0, 0.1);
     const AzimuthElevation BOTH_SLEW      (0.1, 0.1);
 
@@ -91,6 +92,8 @@ int main()
  
    ownship = SOUTH_OF_RWY_25L;
    target  = RUNWAY_25R_MIDPOINT;
+
+   double FoV = FOV_SW_IR;
    
    ldpCamera.starePoint = target;
 
@@ -105,19 +108,25 @@ int main()
          //ownship.lon += 0.00001;
 	  }
 
-	  if (i < 100 || i > 200)
+	  if (i < 35)
 	  {
-	     slew = NO_SLEW;
+	     slew = SLEW_RIGHT;
+
 	  }
 	  else if (i < 200)
 	  {
-         slew = NO_SLEW;
+        slew = SLEW_LEFT;
+        FoV = FOV_W_IR;
 	  }
+     else 
+     {
+        slew = NO_SLEW;
+     }
 
       ldpCamera = lookAtLatLongAlt(ldpCamera.starePoint,
                                    ownship,
                                    attitude,
-                                   FOV_SW_IR,
+                                   FoV,
                                    slew,
                                    deltaTime);
 
