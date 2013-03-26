@@ -105,7 +105,7 @@ int main()
 	  {
              ownship = newEarthPosition(ownship,
 	                                _350_KNOTS,
-                                        070 * DEG_2_RAD,
+                                        250 * DEG_2_RAD,
                                         0.02);	
                                         
 	  }
@@ -157,6 +157,21 @@ int main()
                                    FoV,
                                    slew,
                                    deltaTime);
+
+//      cout << "Camera starepoint Lat: " << ldpCamera.starePoint.lat * RAD_2_DEG
+//    	   << " Lon: " << ldpCamera.starePoint.lon * RAD_2_DEG
+//    	   << " Alt: " << ldpCamera.starePoint.alt * M_2_FT
+//    	   << endl;
+
+//      cout << "FoV: " << ldpCamera.FoV * RAD_2_DEG
+//
+//           << " eyepoint - Lat: " << ldpCamera.eyePoint.lat * RAD_2_DEG
+//           << " deg  Lon: "       << ldpCamera.eyePoint.lon * RAD_2_DEG
+//           << " deg  Alt: "       << ldpCamera.eyePoint.alt
+//           << " m  azimuth: "     << ldpCamera.anglesNav.azimuth   * RAD_2_DEG
+//           << " deg  elevation: " << ldpCamera.anglesNav.elevation * RAD_2_DEG
+//
+//           << endl;
 
       sprintf(message, "%f, %f, %f, 0.0, %f, %f, %f\n",
               ldpCamera.eyePoint.lat * RAD_2_DEG,
