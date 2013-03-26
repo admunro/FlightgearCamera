@@ -130,6 +130,7 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
       
       // new target position estimation based on constant altitude geoid 
       NavPosition targetUnity;
+
       targetUnity.N = -sin(azimuthangle_eyepoint_geoid) * 
                        cos(elevationangle_eyepoint_geoid);
 
@@ -152,8 +153,9 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
       
       NavPosition   tmp_Navpos;
       Cartesian     tmp_XYZpos;
-      Cartesian     starePointXYZ;
       EarthPosition tmp_TargetLLH;
+
+      Cartesian     starePointXYZ;
       
       double pos_tgt_llh_tmp[3];
   
@@ -163,29 +165,41 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
          LOS_enu_azel_tmp[1] = targetUnity.E * k;
          LOS_enu_azel_tmp[2] = targetUnity.D * k;
 
+         tmp_Navpos.N = targetUnity.N * k;
+         tmp_Navpos.E = targetUnity.E * k;
+         tmp_Navpos.D = -targetUnity.D * k;
+
          // Andy's version of ENU2XYZ doesn't work, missing parameters of the
          // origin. Isn't used in tracking calcs, which is why it wasn't 
          // causing trouble before. 
 
          wgs84ENU2XYZ(&LOS_enu_azel_tmp[0], &LOS_enu_azel_tmp[1], &LOS_enu_azel_tmp[2], &pos_LOS_xyz[0], &pos_LOS_xyz[1], &pos_LOS_xyz[2], &pos_tgt_xyz_tmp[0], &pos_tgt_xyz_tmp[1], &pos_tgt_xyz_tmp[2]);
          wgs84XYZ2LLH(&pos_tgt_xyz_tmp[0], &pos_tgt_xyz_tmp[1], &pos_tgt_xyz_tmp[2], &pos_tgt_llh_tmp[0], &pos_tgt_llh_tmp[1], &pos_tgt_llh_tmp[2]); 
+ 
+         tmp_XYZpos     = ENU2XYZ(tmp_Navpos, eyepointXYZ);
+         tmp_TargetLLH  = XYZ2LLH(tmp_XYZpos);
 
-         if (pos_tgt_llh_tmp[2] > camera.starePoint.alt) 
+//         if (tmp_TargetLLH.alt > camera.starePoint.alt) 
+         if (tmp_TargetLLH.alt > camera.starePoint.alt) 
          {
             k = k * (1.0 + sw) ;
          }
-         if (pos_tgt_llh_tmp[2] < camera.starePoint.alt) 
+         if (tmp_TargetLLH.alt < camera.starePoint.alt) 
+//         if (pos_tgt_llh_tmp[2] < camera.starePoint.alt) 
          {
             k = k * (1.0 - sw) ;
          }
          sw = sw * 0.7;
-         resolution = fabs(pos_tgt_llh_tmp[2] - camera.starePoint.alt);
+//         resolution = fabs(pos_tgt_llh_tmp[2] - camera.starePoint.alt);
+         resolution = fabs(tmp_TargetLLH.alt - camera.starePoint.alt);
       }
   
    
-      starePointXYZ.X = pos_tgt_xyz_tmp[0];
-      starePointXYZ.Y = pos_tgt_xyz_tmp[1];
-      starePointXYZ.Z = pos_tgt_xyz_tmp[2];
+//      starePointXYZ.X = pos_tgt_xyz_tmp[0];
+//      starePointXYZ.Y = pos_tgt_xyz_tmp[1];
+//      starePointXYZ.Z = pos_tgt_xyz_tmp[2];
+
+      starePointXYZ = tmp_XYZpos;
      
       camera.starePoint = XYZ2LLH(starePointXYZ);  
 

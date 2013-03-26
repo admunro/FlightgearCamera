@@ -277,7 +277,7 @@ namespace LDPMaths
    Cartesian LLH2XYZ(EarthPosition earthPosition);
    EarthPosition XYZ2LLH(Cartesian geoc);
 
-   Cartesian ENU2XYZ(NavPosition nav, Cartesian geoc);
+   Cartesian ENU2XYZ(NavPosition nav, Cartesian origin);
 
    NavPosition XYZ2ENU(Cartesian geoc1, 
                        Cartesian geoc2);

@@ -57,7 +57,7 @@ int main()
 {
    const int BUFLEN          = 256;
    const int PORT            = 8888;
-   const std::string SERVER  = "localhost";
+   const std::string SERVER  = "10.20.99.163";
   
    // Set up network stuff
    struct sockaddr_in si_other;

@@ -1,5 +1,6 @@
 #include "LDPMaths.hpp"
 
+using namespace LDPMaths;
 
 /*
  * Targets
