@@ -30,7 +30,6 @@
 #include <cstdio>
 #include <iostream>
 #include "Tracking.hpp"
-#include "wgs84_utils.h"
 
 const float XYDeadzone       = 0.00;
 
@@ -107,14 +106,6 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
    if ((fabs(slewDemand.azimuth) > XYDeadzone) ||
 	   (fabs(slewDemand.elevation) > XYDeadzone))
    {
-      
-      double pos_LOS_xyz[3];
-      pos_LOS_xyz[0] = eyepointXYZ.X;
-      pos_LOS_xyz[1] = eyepointXYZ.Y;
-      pos_LOS_xyz[2] = eyepointXYZ.Z;
-
-
-
       double azimuthangle_eyepoint_geoid = 
         camera.anglesNav.azimuth + commandedFoV * dt * slewDemand.azimuth;
 
@@ -125,16 +116,14 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
       // for the target
       camera.anglesNav.azimuth   += commandedFoV * dt * slewDemand.azimuth;
       camera.anglesNav.elevation += commandedFoV * dt * slewDemand.elevation;
-
-      //NavPosition targetUnity = newNavPosition(navAnglesToCosines(camera.anglesNav), 1.0);   THIS IS THE PROBLEM!
       
       // new target position estimation based on constant altitude geoid 
       NavPosition targetUnity;
 
-      targetUnity.N = -sin(azimuthangle_eyepoint_geoid) * 
+      targetUnity.N = -cos(azimuthangle_eyepoint_geoid) * 
                        cos(elevationangle_eyepoint_geoid);
 
-      targetUnity.E = -cos(azimuthangle_eyepoint_geoid) * 
+      targetUnity.E = -sin(azimuthangle_eyepoint_geoid) * 
                        cos(elevationangle_eyepoint_geoid);
 
       targetUnity.D = -sin(elevationangle_eyepoint_geoid);
@@ -148,60 +137,35 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
       double resolution = 1000.0;
       double sw = 0.66;
 
-      double LOS_enu_azel_tmp[3];
-      double pos_tgt_xyz_tmp[3];
       
       NavPosition   tmp_Navpos;
       Cartesian     tmp_XYZpos;
       EarthPosition tmp_TargetLLH;
-
-      Cartesian     starePointXYZ;
       
-      double pos_tgt_llh_tmp[3];
-  
       while (resolution > 0.001 && sw > 0.00001)  
       {    
-         LOS_enu_azel_tmp[0] = targetUnity.N * k;
-         LOS_enu_azel_tmp[1] = targetUnity.E * k;
-         LOS_enu_azel_tmp[2] = targetUnity.D * k;
-
-         tmp_Navpos.N = targetUnity.N * k;
-         tmp_Navpos.E = targetUnity.E * k;
+         tmp_Navpos.N =  targetUnity.N * k;
+         tmp_Navpos.E =  targetUnity.E * k;
          tmp_Navpos.D = -targetUnity.D * k;
 
-         // Andy's version of ENU2XYZ doesn't work, missing parameters of the
-         // origin. Isn't used in tracking calcs, which is why it wasn't 
-         // causing trouble before. 
-
-         wgs84ENU2XYZ(&LOS_enu_azel_tmp[0], &LOS_enu_azel_tmp[1], &LOS_enu_azel_tmp[2], &pos_LOS_xyz[0], &pos_LOS_xyz[1], &pos_LOS_xyz[2], &pos_tgt_xyz_tmp[0], &pos_tgt_xyz_tmp[1], &pos_tgt_xyz_tmp[2]);
-         wgs84XYZ2LLH(&pos_tgt_xyz_tmp[0], &pos_tgt_xyz_tmp[1], &pos_tgt_xyz_tmp[2], &pos_tgt_llh_tmp[0], &pos_tgt_llh_tmp[1], &pos_tgt_llh_tmp[2]); 
- 
          tmp_XYZpos     = ENU2XYZ(tmp_Navpos, eyepointXYZ);
+
          tmp_TargetLLH  = XYZ2LLH(tmp_XYZpos);
 
-//         if (tmp_TargetLLH.alt > camera.starePoint.alt) 
          if (tmp_TargetLLH.alt > camera.starePoint.alt) 
          {
             k = k * (1.0 + sw) ;
          }
          if (tmp_TargetLLH.alt < camera.starePoint.alt) 
-//         if (pos_tgt_llh_tmp[2] < camera.starePoint.alt) 
          {
             k = k * (1.0 - sw) ;
          }
          sw = sw * 0.7;
-//         resolution = fabs(pos_tgt_llh_tmp[2] - camera.starePoint.alt);
+
          resolution = fabs(tmp_TargetLLH.alt - camera.starePoint.alt);
       }
   
-   
-//      starePointXYZ.X = pos_tgt_xyz_tmp[0];
-//      starePointXYZ.Y = pos_tgt_xyz_tmp[1];
-//      starePointXYZ.Z = pos_tgt_xyz_tmp[2];
-
-      starePointXYZ = tmp_XYZpos;
-     
-      camera.starePoint = XYZ2LLH(starePointXYZ);  
+      camera.starePoint = XYZ2LLH(tmp_XYZpos);  
 
    }
    else

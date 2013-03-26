@@ -692,7 +692,7 @@ namespace LDPMaths
       Cartesian ENU2XYZ(NavPosition nav, Cartesian origin) 
       {
 
-         Cartesian neworigin;
+         Cartesian newPosition;
 
          EarthPosition geog = XYZ2LLH(origin);
 
@@ -711,11 +711,11 @@ namespace LDPMaths
          double R32 = cosphi * sinlam;
          double R33 = sinphi;
 
-         neworigin.X = origin.X + R11 * (nav.E) + R21 * (nav.N) + R31 * (-nav.D);
-         neworigin.Y = origin.Y + R12 * (nav.E) + R22 * (nav.N) + R32 * (-nav.D);
-         neworigin.Z = origin.Z + R13 * (nav.E) + R23 * (nav.N) + R33 * (-nav.D);
+         newPosition.X = origin.X + R11 * (nav.E) + R21 * (nav.N) + R31 * (-nav.D);
+         newPosition.Y = origin.Y + R12 * (nav.E) + R22 * (nav.N) + R32 * (-nav.D);
+         newPosition.Z = origin.Z + R13 * (nav.E) + R23 * (nav.N) + R33 * (-nav.D);
 
-         return neworigin;
+         return newPosition;
 
       }
       
