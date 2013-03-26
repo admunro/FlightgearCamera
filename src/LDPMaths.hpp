@@ -21,6 +21,7 @@ namespace LDPMaths
    static const double RAD_2_DEG = 1.0 / DEG_2_RAD;
    static const double M_2_FT    = 3.28084;
    static const double FT_2_M    = 1 / M_2_FT;
+   static const double KTS_2_M_S = 0.514444444;
 
    /*
     * Ownship data
@@ -280,6 +281,13 @@ namespace LDPMaths
 
    NavPosition XYZ2ENU(Cartesian geoc1, 
                        Cartesian geoc2);
+
+
+   EarthPosition newEarthPosition(EarthPosition origin,
+                                  double speed, // metres
+                                  double bearing, // radians
+                                  double dt); 
+
    
 
 

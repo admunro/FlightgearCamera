@@ -25,12 +25,13 @@ using namespace std;
     const double SWITCH_RANGE = 50000.0;
 
     const AzimuthElevation NO_SLEW        (0.0, 0.0);
-    const AzimuthElevation SLEW_RIGHT     (0.5, 0.0);
+    const AzimuthElevation SLEW_RIGHT     (0.75, 0.0);
     const AzimuthElevation SLEW_LEFT      (-0.5, 0.0);
     const AzimuthElevation ELEVATION_SLEW (0.0, 0.1);
     const AzimuthElevation BOTH_SLEW      (0.1, 0.1);
 
 
+    const double _350_KNOTS = 350 * LDPMaths::KTS_2_M_S;
 
 
     EarthPosition    ownship;
@@ -42,8 +43,6 @@ using namespace std;
 
 
     const bool MOVE_OWNSHIP = true;
-
-
 
     const double deltaTime = 0.02;
 
@@ -90,8 +89,8 @@ int main()
    attitude.inclination = 0.0;
    attitude.heading     = 0.0;
  
-   ownship = SOUTH_OF_RWY_25L;
-   target  = RUNWAY_25R_MIDPOINT;
+   ownship = RUNWAY_25L_5K_APPROACH;
+   target  = RUNWAY_25L_THRESHOLD;
 
    double FoV = FOV_SW_IR;
    
@@ -104,8 +103,11 @@ int main()
 
 	  if (MOVE_OWNSHIP)
 	  {
-         ownship.lat += 0.00001;
-         //ownship.lon += 0.00001;
+             ownship = newEarthPosition(ownship,
+	                                _350_KNOTS,
+                                        250 * DEG_2_RAD,
+                                        0.02);	
+                                        
 	  }
 
 	  if (i < 50)
@@ -139,6 +141,14 @@ int main()
      else if (i < 450)
      {
         FoV = FOV_W_IR;
+     }
+     else if (i < 500)
+     {
+        FoV = FOV_SW_IR;
+     }
+     else if (i < 525)
+     {
+        slew = SLEW_LEFT;
      }
 
       ldpCamera = lookAtLatLongAlt(ldpCamera.starePoint,

@@ -42,7 +42,7 @@ namespace LDPMaths
    {
       AzimuthElevation angles;
 
-      angles.azimuth = atan2( posn.E, posn.N);
+      angles.azimuth = atan2(posn.E, posn.N);
 
       angles.elevation = atan2( -posn.D,
                                 sqrt(pow(posn.N, 2) + pow(posn.E, 2)) );
@@ -62,12 +62,12 @@ namespace LDPMaths
    AzimuthElevation getAngles(EarthPosition source, EarthPosition poi)
    {
        NavPosition      navPosition;
-	   AzimuthElevation newAngles;
+       AzimuthElevation newAngles;
 
-	   navPosition = latLongToNED(source, poi);
+       navPosition = latLongToNED(source, poi);
        newAngles =   getAngles(navPosition);
 
-	   return newAngles;
+      return newAngles;
    }
 
 
@@ -137,15 +137,15 @@ namespace LDPMaths
 
 
    NavPosition newNavPosition(NavCosines cosines,
-		                        double     slantRange)
+                            double     slantRange)
    {
-	   NavPosition newPosition;
+      NavPosition newPosition;
 
-	   newPosition.N = slantRange * cosines.N;
-	   newPosition.E = slantRange * cosines.E;
-	   newPosition.D = slantRange * cosines.D;
+      newPosition.N = slantRange * cosines.N;
+      newPosition.E = slantRange * cosines.E;
+      newPosition.D = slantRange * cosines.D;
 
-	   return newPosition;
+      return newPosition;
 
    }
 
@@ -692,14 +692,14 @@ namespace LDPMaths
       Cartesian ENU2XYZ(NavPosition nav, Cartesian geoc) 
       {
 
-	 Cartesian newGeoc;
+    Cartesian newGeoc;
 
-	 EarthPosition geog = XYZ2LLH(geoc);
+    EarthPosition geog = XYZ2LLH(geoc);
 
-	 double sinphi = sin(geog.lat);
-	 double cosphi = cos(geog.lat);
-	 double sinlam = sin(geog.lon);
-	 double coslam = cos(geog.lon);
+         double sinphi = sin(geog.lat);
+         double cosphi = cos(geog.lat);
+         double sinlam = sin(geog.lon);
+         double coslam = cos(geog.lon);
 
          double R11 = -sinlam;
          double R12 = coslam;
@@ -725,10 +725,10 @@ namespace LDPMaths
 
          EarthPosition geog2 = XYZ2LLH(geoc2);
 
-	 double sinphi = sin(geog2.lat);
-	 double cosphi = cos(geog2.lat);
-	 double sinlam = sin(geog2.lon);
-	 double coslam = cos(geog2.lon);
+         double sinphi = sin(geog2.lat);
+         double cosphi = cos(geog2.lat);
+         double sinlam = sin(geog2.lon);
+         double coslam = cos(geog2.lon);
 
          double R11 = -sinlam;
          double R12 = coslam;
@@ -739,16 +739,38 @@ namespace LDPMaths
          double R31 = cosphi * coslam;
          double R32 = cosphi * sinlam;
          double R33 = sinphi;
-	  
-	 double deltaX = geoc1.X - geoc2.X;
+     
+         double deltaX = geoc1.X - geoc2.X;
          double deltaY = geoc1.Y - geoc2.Y;
          double deltaZ = geoc1.Z - geoc2.Z;
 
-	 nav.E = R11 * (deltaX) + R12 * (deltaY) + R13 * (deltaZ);
+         nav.E = R11 * (deltaX) + R12 * (deltaY) + R13 * (deltaZ);
          nav.N = R21 * (deltaX) + R22 * (deltaY) + R23 * (deltaZ);
          nav.D = (R31 * (deltaX) + R32 * (deltaY) + R33 * (deltaZ)) * -1.0;
 
          return nav;
       }
+
+   EarthPosition newEarthPosition(EarthPosition origin,
+                                  double speed, // metres
+                                  double brng, // radians
+                                  double dt)
+   {
+      EarthPosition dest;
+
+      double d = speed * dt;
+
+      dest.lat = asin( sin(origin.lat)*cos(d/R) + 
+              cos(origin.lat)*sin(d/R)*cos(brng) );
+
+      dest.lon = origin.lon + 
+                       atan2(sin(brng)*sin(d/R)*cos(origin.lat), 
+                             cos(d/R)-sin(origin.lat)*sin(dest.lat));
+
+      dest.alt = origin.alt;
+
+      return dest;
+
+   }
 
 }
