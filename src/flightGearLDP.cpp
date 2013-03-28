@@ -57,7 +57,7 @@ int main()
 {
    const int BUFLEN          = 256;
    const int PORT            = 8888;
-   const std::string SERVER  = "10.20.99.163";
+   const std::string SERVER  = "localhost";
   
    // Set up network stuff
    struct sockaddr_in si_other;
@@ -104,7 +104,7 @@ int main()
 	  if (MOVE_OWNSHIP)
 	  {
              ownship = newEarthPosition(ownship,
-	                                _350_KNOTS,
+	                                     _350_KNOTS,
                                         250 * DEG_2_RAD,
                                         0.02);	
                                         
@@ -155,6 +155,8 @@ int main()
                                    ownship,
                                    attitude,
                                    FoV,
+                                   false,
+                                   5000.0,
                                    slew,
                                    deltaTime);
 

@@ -8,7 +8,7 @@ CXX      = g++
 CXXFLAGS = -Wall
 
 exec_name = manualSlewTest
-objects   = $(addprefix $(BUILD)/, flightGearLDP.o Tracking.o LDPMaths.o wgs84_utils.o)
+objects   = $(addprefix $(BUILD)/, flightGearLDP.o Tracking.o LDPMaths.o)
 
 flightGearLDP : $(objects)
 	$(CXX) $(CXXFLAGS) -o $(exec_name) $(objects) 
@@ -16,14 +16,11 @@ flightGearLDP : $(objects)
 $(BUILD)/flightGearLDP.o : Tracking.hpp LDPMaths.hpp Waypoints.hpp
 	$(CXX) $(CXXFLAGS) -c $(SRC)/flightGearLDP.cpp -o $(BUILD)/flightGearLDP.o
    
-$(BUILD)/Tracking.o : Tracking.hpp wgs84_utils.h
+$(BUILD)/Tracking.o : Tracking.hpp
 	$(CXX) $(CXXFLAGS) -c $(SRC)/Tracking.cpp -o $(BUILD)/Tracking.o 
 
 $(BUILD)/LDPMaths.o : LDPMaths.hpp
 	$(CXX) $(CXXFLAGS) -c $(SRC)/LDPMaths.cpp -o $(BUILD)/LDPMaths.o 
-
-$(BUILD)/wgs84_utils.o : wgs84_utils.h
-	$(CXX) $(CXXFLAGS) -c $(SRC)/wgs84_utils.c -o $(BUILD)/wgs84_utils.o
 
 
 clean :

@@ -48,24 +48,7 @@ struct RangeData
    double               heightAboveTarget;
 };
 
-struct PointOfInterest
-{
-   PointOfInterest() : slantRange(0.0),
-                       heightAboveTarget(0.0) {}
 
-   LDPMaths::EarthPosition    earthPosition;
-   double                     slantRange;
-   double                     heightAboveTarget;
-
-   LDPMaths::NavPosition      positionNav;
-   LDPMaths::NavCosines       cosinesNav;
-   LDPMaths::AzimuthElevation anglesNav;
-
-   LDPMaths::BodyPosition     positionBody;
-   LDPMaths::BodyCosines      cosinesBody;
-   LDPMaths::AzimuthElevation anglesBody;
-
-};
 
 struct OwnshipData
 {
@@ -86,6 +69,8 @@ struct OwnshipData
 
 struct CameraData
 {
+   CameraData() : slantRange(0.0), FoV(0.0), bezelRoll(0.0) {}
+
    EarthPosition    eyePoint;  // Camera's position in the world, in
                                // latitude, longitude and altitude above
                                // WGS-84 sea-level. Raidans and metres.
@@ -95,8 +80,10 @@ struct CameraData
                                  
    AzimuthElevation anglesBody;  // Camera's orientation relative to the
                                  // ownship's body. Radians.
-                                 
 
+   double           slantRange;  // Slant range from the camera's position
+                                 // to the target. Metres.
+                                 
    double FoV;  // The camera's horizontal and vertical FoV, in radians
 
    double bezelRoll;    // The amount of roll which would be applied to 
@@ -104,13 +91,19 @@ struct CameraData
 
    EarthPosition    starePoint;
 
+   bool             slewInProgress;
+
 
 };
+
+static const CameraData defaultCamera;
 
 CameraData lookAtLatLongAlt(EarthPosition    target,
                             EarthPosition    ownshipPosition,
                             Attitude         ownshipAttitude,
                             double           commandedFoV,
+                            bool             limitCameraRange,
+                            float            maxCameraRange,
                             AzimuthElevation slewDemand,
                             double           dt);
 

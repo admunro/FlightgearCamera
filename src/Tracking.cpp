@@ -40,12 +40,12 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
                             EarthPosition    ownshipPosition,
                             Attitude         ownshipAttitude,
                             double           commandedFoV,
+                            bool             limitCameraRange,
+                            float            maxCameraRange,
                             AzimuthElevation slewDemand,
                             double           dt)
 {
-   static const double maxCameraRange = 5000;
    
-
    CameraData camera;
    NavCosines targetNavCosines;
 
@@ -64,7 +64,8 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
    ownshipToTarget.Y = ownshipXYZ.Y - targetXYZ.Y;
    ownshipToTarget.Z = ownshipXYZ.Z - targetXYZ.Z;
 
-   double aircraftSlantRange = getSlantRange(ownshipXYZ, targetXYZ);
+   //double aircraftSlantRange = getSlantRange(ownshipXYZ, targetXYZ);
+   camera.slantRange = getSlantRange(ownshipXYZ, targetXYZ);
 
 
    targetNavCosines = navAnglesToCosines(camera.anglesNav);
@@ -78,11 +79,11 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
                                         
    double k = 0;
 
-   if (aircraftSlantRange > maxCameraRange)
+   if ((camera.slantRange > maxCameraRange) && limitCameraRange)
    {
-      k = (aircraftSlantRange - maxCameraRange) / aircraftSlantRange;
+      k = (camera.slantRange - maxCameraRange) / camera.slantRange;
 
-      camera.FoV = 2.0 * atan(aircraftSlantRange / 
+      camera.FoV = 2.0 * atan(camera.slantRange /
                               maxCameraRange * tan(commandedFoV / 2.0));
 
       eyepointXYZ.X = ownshipXYZ.X - ownshipToTarget.X * k;  
@@ -102,9 +103,10 @@ CameraData lookAtLatLongAlt(EarthPosition    targetPosition,
 
    camera.anglesNav = getAngles(camera.eyePoint, targetPosition);
 
+   camera.slewInProgress = fabs(slewDemand.azimuth)   > XYDeadzone ||
+                           fabs(slewDemand.elevation) > XYDeadzone;
 
-   if ((fabs(slewDemand.azimuth) > XYDeadzone) ||
-	   (fabs(slewDemand.elevation) > XYDeadzone))
+   if (camera.slewInProgress)
    {
       double azimuthangle_eyepoint_geoid = 
         camera.anglesNav.azimuth + commandedFoV * dt * slewDemand.azimuth;
