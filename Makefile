@@ -1,27 +1,34 @@
-vpath %.hpp ./src
-vpath %.h ./src
 
-BUILD = ./build
-SRC   = ./src
 
-CXX      = g++
-CXXFLAGS = -Wall
 
-exec_name = manualSlewTest
-objects   = $(addprefix $(BUILD)/, flightGearLDP.o Tracking.o LDPMaths.o)
 
-flightGearLDP : $(objects)
-	$(CXX) $(CXXFLAGS) -o $(exec_name) $(objects) 
+### Compiler, tools and options
 
-$(BUILD)/flightGearLDP.o : Tracking.hpp LDPMaths.hpp Waypoints.hpp
-	$(CXX) $(CXXFLAGS) -c $(SRC)/flightGearLDP.cpp -o $(BUILD)/flightGearLDP.o
+CC          = gcc
+CXX         = g++
+DEFINES     = 
+INCPATH     = -I./src 
+LINK        = g++
+CFLAGS      = -c -Wall
+LFLAGS      = 
+EXECUTABLE  = flightGearldp
+
+SOURCES = ./src/flightGearLDP.cpp \
+          ./src/LDPMaths.cpp \
+          ./src/Tracking.cpp
+
+OBJECTS = ./build/flightGearLDP.o \
+          ./build/LDPMaths.o \
+          ./build/Tracking.o
+
+flightgearLDP: $(OBJECTS)
+	$(CXX) -o flightgearLDP $(OBJECTS)
+
+build/%.o : src/%.cpp
+	$(CXX) $(CFLAGS) -o "$@" "$<"
+
+
+.PHONY : clean
+clean:
+	rm build/*.o flightGearLDP
    
-$(BUILD)/Tracking.o : Tracking.hpp
-	$(CXX) $(CXXFLAGS) -c $(SRC)/Tracking.cpp -o $(BUILD)/Tracking.o 
-
-$(BUILD)/LDPMaths.o : LDPMaths.hpp
-	$(CXX) $(CXXFLAGS) -c $(SRC)/LDPMaths.cpp -o $(BUILD)/LDPMaths.o 
-
-
-clean :
-	-rm $(BUILD)/* $(exec_name)

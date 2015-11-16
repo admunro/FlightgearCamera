@@ -7,12 +7,12 @@
   <input>
    <line_separator>newline</line_separator>
    <var_separator>,</var_separator>
-  <chunk>                                                                                                                                                                                                                                            
+  <chunk>
     <name>latitude-deg</name>                                                                                                                                                                                                                                                  
     <type>double</type>                                                                                                                                                                                                                                                        
     <format>%.10lf</format>                                                                                                                                                                                                                                                    
-    <node>/position/latitude-deg</node>                                                                                                                                                                                                                                        
-   </chunk>                                                                                                                                                                                                                                                                    
+    <node>/position/latitude-deg</node>                                                                                                                                                                                                               
+   </chunk>
                                                                                                                                                                                                                                                                                
    <chunk>
     <name>longitude-deg</name>

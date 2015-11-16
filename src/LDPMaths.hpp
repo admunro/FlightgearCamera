@@ -46,7 +46,6 @@ namespace LDPMaths
       double elevation;  // radians
    };
 
-
    /*
     * Coordinate systems - Earth referenced
     *

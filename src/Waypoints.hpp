@@ -44,7 +44,7 @@ const EarthPosition RUNWAY_25L_10K_APPROACH(48.746944 * DEG_2_RAD,
 
 const EarthPosition RUNWAY_25L_5K_APPROACH(48.730833 * DEG_2_RAD,
                                            11.618056 * DEG_2_RAD,
-                                           7500 * FT_2_M);
+                                           5000      * FT_2_M);
 
 const EarthPosition RUNWAY_07R_APPROACH(48.673611 * DEG_2_RAD,
                                         11.390833 * DEG_2_RAD,

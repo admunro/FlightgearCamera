@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-//#include <chrono>
-//#include <ctime>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -37,6 +35,7 @@ using namespace std;
     EarthPosition    ownship;
     Attitude         attitude;
 
+
     EarthPosition    target;
 
     CameraData       ldpCamera; 
@@ -55,6 +54,9 @@ void die(string s)
 
 int main()
 {
+    attitude.bank = 15 * DEG_2_RAD;
+    attitude.inclination = 5 * DEG_2_RAD;
+
    const int BUFLEN          = 256;
    const int PORT            = 8888;
    const std::string SERVER  = "localhost";
@@ -160,20 +162,6 @@ int main()
                                    slew,
                                    deltaTime);
 
-//      cout << "Camera starepoint Lat: " << ldpCamera.starePoint.lat * RAD_2_DEG
-//    	   << " Lon: " << ldpCamera.starePoint.lon * RAD_2_DEG
-//    	   << " Alt: " << ldpCamera.starePoint.alt * M_2_FT
-//    	   << endl;
-
-//      cout << "FoV: " << ldpCamera.FoV * RAD_2_DEG
-//
-//           << " eyepoint - Lat: " << ldpCamera.eyePoint.lat * RAD_2_DEG
-//           << " deg  Lon: "       << ldpCamera.eyePoint.lon * RAD_2_DEG
-//           << " deg  Alt: "       << ldpCamera.eyePoint.alt
-//           << " m  azimuth: "     << ldpCamera.anglesNav.azimuth   * RAD_2_DEG
-//           << " deg  elevation: " << ldpCamera.anglesNav.elevation * RAD_2_DEG
-//
-//           << endl;
 
       sprintf(message, "%f, %f, %f, 0.0, %f, %f, %f\n",
               ldpCamera.eyePoint.lat * RAD_2_DEG,
