@@ -8,7 +8,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include "LDPMaths.hpp"
 #include "Tracking.hpp"
 #include "Waypoints.hpp"
 
