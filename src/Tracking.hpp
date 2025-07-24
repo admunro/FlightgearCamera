@@ -41,7 +41,6 @@ struct OwnshipData
 
 struct CameraData
 {
-   CameraData() : slantRange(0.0), FoV(0.0), bezelRoll(0.0) {}
 
    EarthPosition    eyePoint;  // Camera's position in the world, in
                                // latitude, longitude and altitude above
@@ -53,22 +52,19 @@ struct CameraData
    AzimuthElevation anglesBody;  // Camera's orientation relative to the
                                  // ownship's body. Radians.
 
-   double           slantRange;  // Slant range from the camera's position
-                                 // to the target. Metres.
+   double           slantRange {0.0};  // Slant range from the camera's position
+                                       // to the target. Metres.
                                  
-   double FoV;  // The camera's horizontal and vertical FoV, in radians
+   double FoV {0.0};  // The camera's horizontal and vertical FoV, in radians
 
-   double bezelRoll;    // The amount of roll which would be applied to 
-                        // horizon stabilise the camera's image
+   double bezelRoll {0.0};    // The amount of roll which would be applied to 
+                              // horizon stabilise the camera's image
 
    EarthPosition    starePoint;
 
-   bool             slewInProgress;
-
+   bool             slewInProgress {false}; // True if the camera is currently slewing
 
 };
-
-static const CameraData defaultCamera;
 
 CameraData lookAtLatLongAlt(EarthPosition    target,
                             EarthPosition    ownshipPosition,

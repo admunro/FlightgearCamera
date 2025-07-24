@@ -1,8 +1,8 @@
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 #include <cmath>
 #include <cstdlib>
-#include <cstdio>
 #include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -17,9 +17,6 @@ using namespace std;
     const double FOV_SW_IR = 24.0  * DEG_2_RAD;
     const double FOV_W_IR  =  2.8  * DEG_2_RAD;
     const double FOV_N_IR  =  0.77 * DEG_2_RAD;
-
-    // Switch range - threshold for fiddling with the eyepoint
-    const double SWITCH_RANGE = 50000.0;
 
     const AzimuthElevation NO_SLEW        (0.0, 0.0);
     const AzimuthElevation SLEW_RIGHT     (0.75, 0.0);
@@ -58,7 +55,7 @@ int main()
 
    const int BUFLEN          = 256;
    const int PORT            = 8888;
-   const std::string SERVER  = "localhost";
+   const std::string SERVER  = "127.0.0.1";
   
    // Set up network stuff
    struct sockaddr_in si_other;
@@ -97,7 +94,7 @@ int main()
    
    ldpCamera.starePoint = target;
 
-   for (int i = 1; i <= 600; i++)
+   for (int i = 1; i <= 1500; i++)
    {
 
 	  AzimuthElevation slew;

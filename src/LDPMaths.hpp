@@ -8,20 +8,18 @@
  *      Author: munro
  */
 
-#ifndef LDPMATHS_HPP_
-#define LDPMATHS_HPP_
-
+#pragma once
 
 namespace LDPMaths
 {
-   static const double PI = 3.14159265359;
-   static const double R  = 6378137.0;
+   constexpr double PI = 3.14159265359;
+   constexpr double R  = 6378137.0;
 
-   static const double DEG_2_RAD = PI / 180.0;
-   static const double RAD_2_DEG = 1.0 / DEG_2_RAD;
-   static const double M_2_FT    = 3.28084;
-   static const double FT_2_M    = 1 / M_2_FT;
-   static const double KTS_2_M_S = 0.514444444;
+   constexpr double DEG_2_RAD = PI / 180.0;
+   constexpr double RAD_2_DEG = 1.0 / DEG_2_RAD;
+   constexpr double M_2_FT    = 3.28084;
+   constexpr double FT_2_M    = 1 / M_2_FT;
+   constexpr double KTS_2_M_S = 0.514444444;
 
    /*
     * Ownship data
@@ -30,20 +28,18 @@ namespace LDPMaths
     */
    struct Attitude
    {
-      Attitude() : bank(0.0), inclination(0.0), heading(0.0) {}
-
-      double bank;        // radians   +/- PI
-      double inclination; // radians   +/- PI/2
-      double heading;     // radians   0.. 2PI
+      double bank {0.0};        // radians   +/- PI
+      double inclination {0.0}; // radians   +/- PI/2
+      double heading {0.0};     // radians   0.. 2PI
    };
 
    struct AzimuthElevation
    {
-      AzimuthElevation() : azimuth(0.0), elevation(0.0) {}
+      AzimuthElevation() = default;
       AzimuthElevation(double az, double el) { azimuth = az; elevation = el; }
 
-      double azimuth;    // radians
-      double elevation;  // radians
+      double azimuth {0.0};    // radians
+      double elevation {0.0};  // radians
    };
 
    /*
@@ -52,18 +48,14 @@ namespace LDPMaths
     */
    struct EarthPosition
    {
-      EarthPosition() : lat(0.0), lon(0.0), alt(0.0) {}
+      EarthPosition() = default;
+      
+      EarthPosition(double latitude, double longitude, double altitude):
+         lat(latitude), lon(longitude), alt(altitude) {}
 
-      EarthPosition(double latitude, double longitude, double altitude)
-      {
-    	  lat = latitude;
-    	  lon = longitude;
-    	  alt = altitude;
-      }
-
-      double lat; // radians
-      double lon; // radians
-      double alt; // metres
+      double lat {0.0}; // radians
+      double lon {0.0}; // radians
+      double alt {0.0}; // metres
    };
 
    /*
@@ -74,38 +66,30 @@ namespace LDPMaths
     */
    struct NavPosition
    {
-      NavPosition() : N(0.0), E(0.0), D(0.0) {}
-
-      double N; // metres
-      double E; // metres
-      double D; // metres
+      double N {0.0}; // metres
+      double E {0.0}; // metres
+      double D {0.0}; // metres
    };
 
    struct NavVelocity
    {
-      NavVelocity() : N(0.0), E(0.0), D(0.0) {}
-
-      double N; // m/s
-      double E; // m/s
-      double D; // m/s
+      double N {0.0}; // m/s
+      double E {0.0}; // m/s
+      double D {0.0}; // m/s
    };
 
    struct NavAcceleration
    {
-      NavAcceleration() : N(0.0), E(0.0), D(0.0) {}
-
-      double N; // m/s^^2
-      double E; // m/s^^2
-      double D; // m/s^^2
+      double N {0.0}; // m/s^^2
+      double E {0.0}; // m/s^^2
+      double D {0.0}; // m/s^^2
    };
 
    struct NavCosines
    {
-      NavCosines() : N(0.0), E(0.0), D(0.0) {}
-
-      double N;
-      double E;
-      double D;
+      double N {0.0};
+      double E {0.0};
+      double D {0.0};
    };
 
 
@@ -117,38 +101,30 @@ namespace LDPMaths
     */
    struct BodyPosition
    {
-      BodyPosition() : X(0.0), Y(0.0), Z(0.0) {}
-
-      double X; // metres
-      double Y; // metres
-      double Z; // metres
+      double X {0.0}; // metres
+      double Y {0.0}; // metres
+      double Z {0.0}; // metres
    };
 
    struct BodyVelocity
    {
-      BodyVelocity() : X(0.0), Y(0.0), Z(0.0) {}
-
-      double X; // metres/second
-      double Y; // metres/second
-      double Z; // metres/second
+      double X {0.0}; // metres/second
+      double Y {0.0}; // metres/second
+      double Z {0.0}; // metres/second
    };
 
    struct BodyAcceleration
    {
-      BodyAcceleration() : X(0.0), Y(0.0), Z(0.0) {}
-
-      double X; // metres/second^^2
-      double Y; // metres/second^^2
-      double Z; // metres/second^^2
+      double X {0.0}; // metres/second^^2
+      double Y {0.0}; // metres/second^^2
+      double Z {0.0}; // metres/second^^2
    };
 
    struct BodyCosines
    {
-      BodyCosines() : X(0.0), Y(0.0), Z(0.0) {}
-
-      double X;
-      double Y;
-      double Z;
+      double X {0.0};
+      double Y {0.0};
+      double Z {0.0};
    };
 
 
@@ -288,9 +264,4 @@ namespace LDPMaths
                                   double dt); 
 
    
-
-
 }
-
-
-#endif /* LDPMATHS_HPP_ */
