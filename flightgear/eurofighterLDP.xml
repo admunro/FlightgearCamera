@@ -1,0 +1,23 @@
+<PropertyList>
+
+   <sim>
+
+      <hud>
+        <enable3d n="1">false</enable3d>
+      </hud>
+
+   </sim>
+
+   <ldp>
+
+      <view>
+
+         <x-offset-m type="float"> 0.0 </x-offset-m>
+         <y-offset-m type="float"> 0.0 </y-offset-m>
+         <z-offset-m type="float"> -25.0 </z-offset-m>
+
+      </view>
+
+   </ldp>
+
+</PropertyList>

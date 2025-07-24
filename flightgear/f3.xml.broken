@@ -48,7 +48,7 @@
     <name>heading-deg</name>
     <type>float</type>
     <format>%f</format>
-    <node>/orientation/heading-deg</node>
+    <node>/sim/orientation/heading-deg</node>
     <!--<node>/sim/current-view/goal-heading-offset-deg</node> -->
    </chunk>
 
